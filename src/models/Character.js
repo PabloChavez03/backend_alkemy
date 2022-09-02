@@ -4,8 +4,7 @@ module.exports = (sequelize) => {
   sequelize.define('Character', {
     name: {
       type: DataTypes.STRING(),
-      allowNull: false,
-      unique: true
+      allowNull: false
     },
     year: {
       type: DataTypes.INTEGER(),
