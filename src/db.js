@@ -47,8 +47,8 @@ const { Character,Genre,Movie,User } = sequelize.models
 Character.belongsToMany(Movie, { through: 'Rol_Movie', timestamps: false})
 Movie.belongsToMany(Character, { through: 'Rol_Movie', timestamps: false})
 
-Movie.belongsToMany(Genre, {through: 'Genre_Movie'})
-Genre.belongsToMany(Movie, {through: 'Genre_Movie'})
+Movie.belongsToMany(Genre, {through: 'Genre_Movie', timestamps: false})
+Genre.belongsToMany(Movie, {through: 'Genre_Movie', timestamps: false})
 
 
 
