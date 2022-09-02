@@ -23,6 +23,26 @@ const getMovies = async (req, res) => {
   return res.status(200).json(movies)
 }
 
+const getMovie = async (req, res) => {
+  const { id } = req.params
+  try {
+    const movie = await Movie.findByPk(id, {
+      include: {
+        model: Character,
+        attributes: ["name"]
+      }
+    })
+
+    if (movie) {
+      return res.status(200).json(movie)
+    }
+    
+    return res.status(404).json({ message: "No existe la pelicula" })
+  } catch (error) {
+    return res.status(409).json({ message: error.message })
+  }
+}
+
 const postMovie = async (req, res) => {
   const { title, dateToCreate, rate, image, character } = req.body
 
@@ -97,8 +117,31 @@ const updateMovie = async (req, res) => {
   }
 }
 
+const deleteMovie = async (req, res) => {
+  const { id } = req.params
+  try {
+    const movieDestroy = await Movie.destroy({
+      where: {
+        id
+      }
+    })
+
+    if (movieDestroy === 1) {
+      return res.status(200).json({ message: "La pelicula ha sido eliminada" })
+    }
+
+    return res.status(200).json({ message: "La pelicula ha sido eliminada previamente" })
+
+  } catch (error) {
+    console.log(error)
+    return res.status(409).json({ message: error.message })
+  }
+}
+
 module.exports = {
+  getMovie,
   getMovies,
   postMovie,
-  updateMovie
+  updateMovie,
+  deleteMovie
 }

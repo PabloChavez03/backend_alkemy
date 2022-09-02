@@ -71,7 +71,11 @@ const getCharacter = async (req, res) => {
       }
     })
 
-    return res.status(200).json(character)
+    if (character) {
+      return res.status(200).json(character)
+    }
+
+    return res.status(404).json({ message: "No existe el personaje" })
   } catch (error) {
     return res.status(409).json({ message: error.message })
   }
@@ -170,7 +174,6 @@ const deleteCharacter = async (req, res) => {
     console.log(error)
     return res.status(409).json({ message: error.message })
   }
-
 }
 
 module.exports = {
