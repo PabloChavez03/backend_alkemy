@@ -2,7 +2,7 @@ const { Character, Movie } = require('../../db.js')
 
 const getCharacters = async (req, res) => {
   try {
-    const characters = await Character.findAll({
+    let characters = await Character.findAll({
       include: {
         model: Movie,
         attributes: ["title"]
@@ -12,6 +12,13 @@ const getCharacters = async (req, res) => {
     if (characters.length === 0) {
       return res.status(200).json({ message: 'Aún no se ha añadido ningún personaje' })
     }
+
+    characters = characters.map(character => {
+      return {
+        name: character.name,
+        image: character.image
+      }
+    })
 
     return res.status(200).json(characters)
   } catch (error) {
