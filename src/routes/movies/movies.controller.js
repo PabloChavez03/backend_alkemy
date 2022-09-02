@@ -1,6 +1,9 @@
-const { Movie, Character } = require('../../db.js')
+const { Movie, Character, Genre } = require('../../db.js')
+const { adapterMovie } = require('./helpers')
 
 const getMovies = async (req, res) => {
+  const { name } = req.query
+
   let movies = await Movie.findAll({
     include: {
       model: Character,
@@ -12,13 +15,19 @@ const getMovies = async (req, res) => {
     return res.status(200).json({ message: "Aún no se han agregado peliculas" })
   }
 
-  movies = movies.map(movie => {
-    return {
-      title: movie.title,
-      dateToCreate: movie.day_to_create,
-      image: movie.image
+  if (name) {
+    let movieName = movies.filter(el => el.title.toLowerCase().includes(name.toLowerCase()))
+    if (movieName.length !== 0) {
+      movieName = adapterMovie(movieName)
+      return res.status(200).json(movieName)
     }
-  })
+
+    movies = adapterMovie(movies)
+
+    return res.status(200).json(movies)
+  }
+
+  movies = adapterMovie(movies)
 
   return res.status(200).json(movies)
 }
@@ -36,7 +45,7 @@ const getMovie = async (req, res) => {
     if (movie) {
       return res.status(200).json(movie)
     }
-    
+
     return res.status(404).json({ message: "No existe la pelicula" })
   } catch (error) {
     return res.status(409).json({ message: error.message })
@@ -44,7 +53,7 @@ const getMovie = async (req, res) => {
 }
 
 const postMovie = async (req, res) => {
-  const { title, dateToCreate, rate, image, character } = req.body
+  const { title, dateToCreate, rate, image, character, genre } = req.body
 
   try {
     const [movie, created] = await Movie.findOrCreate({
@@ -64,6 +73,23 @@ const postMovie = async (req, res) => {
       })
 
       await movie.addCharacters(characterInMovie)
+    }
+
+    if (genre) {
+      let genreInMovie = await Genre.findAll({
+        where: {
+          name: genre
+        }
+      })
+      if (genreInMovie.length === 0) {
+        genreInMovie = await Genre.create({ name: genre })
+
+        await movie.addGenres(genreInMovie)
+        await movie.save()
+      }
+
+      await movie.addGenres(genreInMovie)
+      await movie.save()
     }
 
     if (created === true) {
