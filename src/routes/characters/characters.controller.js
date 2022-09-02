@@ -7,7 +7,7 @@ const getCharacters = async (req, res) => {
     let characters = await Character.findAll({
       include: {
         model: Movie,
-        attributes: ["title","id"]
+        attributes: ["title", "id"]
       }
     })
 
@@ -40,10 +40,11 @@ const getCharacters = async (req, res) => {
     }
 
     if (movieId) { // queda por probar pero estoy seguro de que está bien // 2. debera ser un id y no title
-      let charactersMovie = characters.filter(el => { el.Movies.find(movie => movie.id === movieId)?.id === movieId})
-      console.log(charactersMovie)
+      let charactersMovie = characters.filter((el) => {
+        return el.Movies?.find(el => String(el.id) === movieId)
+      }) //Movies es un array
       if (charactersMovie.length !== 0) {
-        // charactersMovie = adapterCharacter(charactersMovie)
+        charactersMovie = adapterCharacter(charactersMovie)
         return res.status(200).json(charactersMovie)
       }
 
