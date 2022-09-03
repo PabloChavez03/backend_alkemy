@@ -76,17 +76,29 @@ const postMovie = async (req, res) => {
     }
 
     if (genre) {
-      let genreInMovie = await Genre.findAll({
+      if (Array.isArray(genre)) {
+        genre.forEach( async (el) => {
+          await Genre.findOrCreate({
+            where: {
+              name: el
+            }
+          })
+        })
+  
+        let genreInMovie = await Genre.findAll({
+          where: {
+            name: genre
+          }
+        })
+
+        await movie.setGenres(genreInMovie)
+        await movie.save()
+      }
+      let [genreInMovie] = await Genre.findOrCreate({
         where: {
           name: genre
         }
       })
-      if (genreInMovie.length === 0) {
-        genreInMovie = await Genre.create({ name: genre })
-
-        await movie.addGenres(genreInMovie)
-        await movie.save()
-      }
 
       await movie.addGenres(genreInMovie)
       await movie.save()
