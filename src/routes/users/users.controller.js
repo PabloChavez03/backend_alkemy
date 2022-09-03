@@ -1,5 +1,6 @@
 const { User } = require('../../db.js')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const getUsers = async (req, res) => {
   const users = await User.findAll()
@@ -38,7 +39,33 @@ const registerUser = async (req, res) => {
   }
 }
 
+const loginUser = async (req,res) => {
+  const { username,password } = req.body
+  try {
+    const user = await User.findByPk(username)
+
+    const passwordCorrect = user === null
+      ? false
+      : await bcrypt.compare(password, user.password)
+
+    const userForToken = {
+      username: user.username,
+      password: user.password
+    }
+
+    const token = jwt.sign(userForToken, process.env.SECRET_WORD)
+    if (!(user && passwordCorrect)) {
+      return res.status(401).json({ message: "Usuario o contraseña incorrecta" })
+    }
+
+    return res.status(200).json({ user: user.email, token: token })
+  } catch (error) {
+    return res.status(409).json({ message: error.message })
+  }
+}
+
 module.exports = {
   getUsers,
-  registerUser
+  registerUser,
+  loginUser
 }
