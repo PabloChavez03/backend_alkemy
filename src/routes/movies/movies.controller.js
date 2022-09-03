@@ -2,13 +2,19 @@ const { Movie, Character, Genre } = require('../../db.js')
 const { adapterMovie } = require('./helpers')
 
 const getMovies = async (req, res) => {
-  const { name } = req.query
+  const { name, genre, order } = req.query
 
   let movies = await Movie.findAll({
-    include: {
-      model: Character,
-      attributes: ["name"]
-    }
+    include: [
+      {
+        model: Character,
+        attributes: ["name"]
+      },
+      {
+        model: Genre,
+        attributes: ["name", "id"]
+      }
+    ]
   })
 
   if (movies.length === 0) {
@@ -20,6 +26,38 @@ const getMovies = async (req, res) => {
     if (movieName.length !== 0) {
       movieName = adapterMovie(movieName)
       return res.status(200).json(movieName)
+    }
+  }
+
+  if (genre) {
+    let movieGenre = movies.filter(el => {
+      return el.Genres?.find(el => String(el.id) === genre)
+    })
+    if (movieGenre.length !== 0) {
+      movieGenre = adapterMovie(movieGenre)
+      return res.status(200).json(movieGenre)
+    }
+
+    movies = adapterMovie(movies)
+
+    return res.status(200).json(movies)
+  }
+
+  if (order) {
+    if (order === "ASC") {
+      let movieOrder = movies.sort((a, b) => {
+        return a.title.localeCompare(b.title)
+      })
+      movieOrder = adapterMovie(movieOrder)
+      return res.status(200).json(movieOrder)
+    }
+
+    if (order === "DESC") {
+      let movieOrder = movies.sort((a, b) => {
+        return b.title.localeCompare(a.title)
+      })
+      movieOrder = adapterMovie(movieOrder)
+      return res.status(200).json(movieOrder)
     }
 
     movies = adapterMovie(movies)
@@ -77,14 +115,14 @@ const postMovie = async (req, res) => {
 
     if (genre) {
       if (Array.isArray(genre)) {
-        genre.forEach( async (el) => {
+        genre.forEach(async (el) => {
           await Genre.findOrCreate({
             where: {
               name: el
             }
           })
         })
-  
+
         let genreInMovie = await Genre.findAll({
           where: {
             name: genre
