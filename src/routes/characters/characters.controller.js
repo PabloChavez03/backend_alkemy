@@ -39,10 +39,10 @@ const getCharacters = async (req, res) => {
       return res.status(200).json(characters)
     }
 
-    if (movieId) { // queda por probar pero estoy seguro de que está bien // 2. debera ser un id y no title
+    if (movieId) {
       let charactersMovie = characters.filter((el) => {
         return el.Movies?.find(el => String(el.id) === movieId)
-      }) //Movies es un array
+      }) 
       if (charactersMovie.length !== 0) {
         charactersMovie = adapterCharacter(charactersMovie)
         return res.status(200).json(charactersMovie)
