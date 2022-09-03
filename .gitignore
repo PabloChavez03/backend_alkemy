@@ -1,5 +1,8 @@
 #dependecies
 node_modules
 
+#package
+package-lock.json
+
 #enviroment
 .env
