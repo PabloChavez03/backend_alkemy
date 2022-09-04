@@ -46,7 +46,7 @@ const getMovies = async (req, res) => {
   if (order) {
     if (order === "ASC") {
       let movieOrder = movies.sort((a, b) => {
-        return a.title.localeCompare(b.title)
+        return a.day_to_create - b.day_to_create
       })
       movieOrder = adapterMovie(movieOrder)
       return res.status(200).json(movieOrder)
@@ -54,7 +54,7 @@ const getMovies = async (req, res) => {
 
     if (order === "DESC") {
       let movieOrder = movies.sort((a, b) => {
-        return b.title.localeCompare(a.title)
+        return b.day_to_create - a.day_to_create
       })
       movieOrder = adapterMovie(movieOrder)
       return res.status(200).json(movieOrder)
