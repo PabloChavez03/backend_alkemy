@@ -6,3 +6,4 @@ package-lock.json
 
 #enviroment
 .env
+sendgrid.env
