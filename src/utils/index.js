@@ -22,6 +22,35 @@ const initialCharacters = [
   }
 ]
 
+const initialMovies = [
+  {
+    title:"Cenicienta",
+    rate: 4.1,
+    day_to_create: "03-12-2011",
+    image: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/red-1-1647330956.jpg"
+  },
+  {
+    title:"Aladdin",
+    rate: 4.1,
+    day_to_create: "03-12-2011",
+    image: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/red-1-1647330956.jpg"
+  },
+  {
+    title:"Hércules",
+    rate: 4.1,
+    day_to_create: "03-12-2011",
+    image: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/red-1-1647330956.jpg"
+  },
+]
+
+const user = {
+  username: "admin",
+  password: "admin",
+  email: "pablooscarchavez@gmail.com"
+}
+
 module.exports = {
-  initialCharacters
+  initialCharacters,
+  initialMovies,
+  user
 }

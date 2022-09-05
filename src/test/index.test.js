@@ -1,7 +1,7 @@
 const { conn } = require('../../index.js')
 const server = require('../app.js')
-const { Character, Movie, Genre } = require('../db.js')
-const { initialCharacters } = require('../utils')
+const { Character, Movie, Genre, User } = require('../db.js')
+const { initialCharacters, initialMovies, user } = require('../utils')
 const request = require('supertest')(server)
 const expect = require('chai').expect
 
@@ -13,28 +13,79 @@ before(async () => {
     }
   })
 
+  await Movie.destroy({
+    where: {},
+    truncate: {
+      cascade: true
+    }
+  })
+
+  await User.destroy({
+    where: {},
+    truncate: {
+      cascade: true
+    }
+  })
+
   const character1 = await Character.create(initialCharacters[0])
   await character1.save()
 
   const character2 = await Character.create(initialCharacters[1])
   await character2.save()
+
+  const movie1 = await Movie.create(initialMovies[0])
+  await movie1.save()
+
+  const movie2 = await Movie.create(initialMovies[1])
+  await movie2.save()
 })
 
 describe("Disney API", () => {
-  describe('Characters', () => {
-    describe('GET characters', () => {
-      it("Hay personajes", async () => {
-        const response = await request.get("/characters")
+  describe('User', () => {
+    describe('POST register', () => {
+      it('Se espera el registro', async () => {
+        const response = await request
+          .post('/auth/register')
+          .send(user)
+        expect(response.status).to.eql(201)
+      })
+    })
+    describe('POST login', () => {
+      it('Se espera loguearse', async () => {
+        const login = {
+          username: "admin",
+          password: "admin"
+        }
+        const response = await request
+          .post('/auth/login')
+          .send(login)
         expect(response.status).to.eql(200)
       })
-      it("Hay más de un personaje en db", async () => {
+    })
+  })
+  
+  describe('Characters', () => {
+    describe('GET characters', () => {
+      it("Se espera que haya personajes", async () => {
         const response = await request.get("/characters")
-        expect(response.body).length(2)
+        expect(response.status).to.eql(200)
+        expect(response.body).not.length(0)
+      })
+    })
+
+    /**
+     * Como la base de datos se destruye y se vuelve a levantar cada npm test, el id de los personajes va cambiando, ya que se vuelven a construir -esto está definido en el before hook-. Por lo que el id en la ruta no puede ser el mismo.   
+     */
+    describe('GET character', () => {
+      xit('Se espera que obtenga el personaje deseado, sino el personaje no existe', async () => {
+        const response = await request.get(`/characters/${120}`)
+
+        expect(response.status).to.equal(200)
       })
     })
 
     describe('POST characters', () => {
-      it('the status is expected to be 201, otherwise there are missing fields to fill in', async () => {
+      it('Se espera un status de 201, sino hay campos faltantes', async () => {
         const character = {
           name: "Rayo McQueen",
           year: 22,
@@ -49,19 +100,54 @@ describe("Disney API", () => {
 
         expect(response.status).to.eql(201)
       })
-      it('Formato inválido del personaje en la solicitud POST', async () => {// POR TERMINAR
+      it('Se espera un status de 201, sino hay tipos de datos incorrectos', async () => {
         const character = {
-          name: 123,
+          name: "Rayo",
           year: 22,
           history: "Ganar la Copa Piston",
           weight: 32.2,
-          image: 123
+          image: "imagen"
         }
         const response = await request
           .post("/characters")
           .send(character)
 
-        // expect(response.body.weight)
+        expect(response.status).to.eql(201)
+      })
+    })
+  })
+
+  describe('Movies', () => {
+    describe('GET movies', () => {
+      it('Se espera que haya peliculas', async () => {
+        const response = await request.get('/movies')
+        expect(response.status).to.eql(200)
+        expect(response.body).not.length(0)
+      })
+    })
+
+    xdescribe('GET movie', () => {
+      it('Se espera que se obtenga la pelicula deseada', async () => {
+        const response = await request.get(`/movies/38`)
+        expect(response.status).to.equal(200)
+        expect(Object.values(response.body)).not.length(0)
+      })
+    })
+
+    xdescribe('POST movie', () => {
+      it('Se espera un status 201, sino hay campos faltantes', async () => {
+        const movie = {
+          title: "Red",
+          rate: 4.1,
+          day_to_create: "03-12-2011",
+          image: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/red-1-1647330956.jpg",
+        }
+
+        const response = await request
+          .post("/movies")
+          .send(movie)
+          .set('Authorization', `Bearer ${token}`)
+        expect(response.status).to.eql(201)
       })
     })
   })
