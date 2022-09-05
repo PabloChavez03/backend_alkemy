@@ -21,7 +21,6 @@ Deberá crear un archivo `.env` y escribir dentro los siguientes datos:
 
     `SENDGRID_API_KEY` = *adicionalmente deberá registrarse y proporcionar una api key para sengrid para los emails.*
 
-*Sendgrid api key → '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’*
 
 ### 1.2 Adicional
 

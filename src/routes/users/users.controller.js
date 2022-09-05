@@ -33,7 +33,7 @@ const registerUser = async (req, res) => {
         const msg = {
           to: `${user.email}`,
           from: 'pablooscarchavez@gmail.com', 
-          templateId: 'd-ff18d2eccbd4487996a189137ff5e137',
+          templateId: process.env.TEMPLATE_ID,
         }
         sendEmail(msg)
         return res.status(201).json({ message: "El usuario ha sido registrado correctamente, se ha enviado un correo a su email, verifiquelo porfavor" })
