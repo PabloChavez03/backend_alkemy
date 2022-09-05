@@ -30,12 +30,12 @@ const registerUser = async (req, res) => {
       })
 
       if (created === true) {
-        // const msg = {
-        //   to: `${user.email}`,
-        //   from: 'pablooscarchavez@gmail.com', 
-        //   templateId: 'd-ff18d2eccbd4487996a189137ff5e137',
-        // }
-        // sendEmail(msg)
+        const msg = {
+          to: `${user.email}`,
+          from: 'pablooscarchavez@gmail.com', 
+          templateId: 'd-ff18d2eccbd4487996a189137ff5e137',
+        }
+        sendEmail(msg)
         return res.status(201).json({ message: "El usuario ha sido registrado correctamente, se ha enviado un correo a su email, verifiquelo porfavor" })
       }
     }

@@ -1,5 +1,6 @@
 const { Movie, Character, Genre } = require('../../db.js')
 const { adapterMovie } = require('./helpers')
+const moment = require('moment')
 
 const getMovies = async (req, res) => {
   const { name, genre, order } = req.query
@@ -97,7 +98,7 @@ const postMovie = async (req, res) => {
     const [movie, created] = await Movie.findOrCreate({
       where: {
         title,
-        day_to_create: dateToCreate,
+        day_to_create: moment(dateToCreate,"MM-DD-YYYY"),
         rate,
         image
       }

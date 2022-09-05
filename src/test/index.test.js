@@ -1,9 +1,12 @@
 const { conn } = require('../../index.js')
+// const moment = require('moment')
 const server = require('../app.js')
 const { Character, Movie, Genre, User } = require('../db.js')
 const { initialCharacters, initialMovies, user } = require('../utils')
 const request = require('supertest')(server)
 const expect = require('chai').expect
+
+var token;
 
 before(async () => {
   await Character.destroy({
@@ -47,6 +50,7 @@ describe("Disney API", () => {
         const response = await request
           .post('/auth/register')
           .send(user)
+          
         expect(response.status).to.eql(201)
       })
     })
@@ -59,6 +63,8 @@ describe("Disney API", () => {
         const response = await request
           .post('/auth/login')
           .send(login)
+
+        token = response.body.token
         expect(response.status).to.eql(200)
       })
     })
@@ -67,7 +73,10 @@ describe("Disney API", () => {
   describe('Characters', () => {
     describe('GET characters', () => {
       it("Se espera que haya personajes", async () => {
-        const response = await request.get("/characters")
+        const response = await request
+          .get("/characters")
+          .set('Authorization', `Bearer ${token}`)
+
         expect(response.status).to.eql(200)
         expect(response.body).not.length(0)
       })
@@ -78,7 +87,9 @@ describe("Disney API", () => {
      */
     describe('GET character', () => {
       xit('Se espera que obtenga el personaje deseado, sino el personaje no existe', async () => {
-        const response = await request.get(`/characters/${120}`)
+        const response = await request
+          .get(`/characters/${120}`)
+          .set('Authorization', `Bearer ${token}`)
 
         expect(response.status).to.equal(200)
       })
@@ -97,6 +108,7 @@ describe("Disney API", () => {
         const response = await request
           .post("/characters")
           .send(character)
+          .set('Authorization', `Bearer ${token}`)
 
         expect(response.status).to.eql(201)
       })
@@ -111,6 +123,7 @@ describe("Disney API", () => {
         const response = await request
           .post("/characters")
           .send(character)
+          .set('Authorization', `Bearer ${token}`)
 
         expect(response.status).to.eql(201)
       })
@@ -120,7 +133,10 @@ describe("Disney API", () => {
   describe('Movies', () => {
     describe('GET movies', () => {
       it('Se espera que haya peliculas', async () => {
-        const response = await request.get('/movies')
+        const response = await request
+          .get('/movies')
+          .set('Authorization', `Bearer ${token}`)
+
         expect(response.status).to.eql(200)
         expect(response.body).not.length(0)
       })
@@ -128,18 +144,21 @@ describe("Disney API", () => {
 
     xdescribe('GET movie', () => {
       it('Se espera que se obtenga la pelicula deseada', async () => {
-        const response = await request.get(`/movies/38`)
+        const response = await request
+          .get(`/movies/38`)
+          .set('Authorization', `Bearer ${token}`)
+
         expect(response.status).to.equal(200)
         expect(Object.values(response.body)).not.length(0)
       })
     })
 
-    xdescribe('POST movie', () => {
+    describe('POST movie', () => {
       it('Se espera un status 201, sino hay campos faltantes', async () => {
         const movie = {
           title: "Red",
           rate: 4.1,
-          day_to_create: "03-12-2011",
+          dateToCreate: "12-03-1997",
           image: "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/red-1-1647330956.jpg",
         }
 
@@ -147,7 +166,8 @@ describe("Disney API", () => {
           .post("/movies")
           .send(movie)
           .set('Authorization', `Bearer ${token}`)
-        expect(response.status).to.eql(201)
+          
+        expect(response.status).to.equal(201)
       })
     })
   })

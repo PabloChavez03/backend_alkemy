@@ -10,6 +10,7 @@ const {
   DB_NAME_TEST
 } = process.env
 
+// Para no tirar de la base de datos original y tener una de testing
 const DB_NAME_CURRENT = process.env.NODE_ENV === 'test'
 ? DB_NAME_TEST
 : DB_NAME
@@ -47,8 +48,6 @@ sequelize.models = Object.fromEntries(capsEntries)
 
 const { Character,Genre,Movie,User } = sequelize.models
 
-// Aca vendran las relaciones
-
 Character.belongsToMany(Movie, { through: 'Rol_Movie', timestamps: false})
 Movie.belongsToMany(Character, { through: 'Rol_Movie', timestamps: false})
 
@@ -56,9 +55,7 @@ Movie.belongsToMany(Genre, {through: 'Genre_Movie', timestamps: false})
 Genre.belongsToMany(Movie, {through: 'Genre_Movie', timestamps: false})
 
 
-
-
 module.exports = {
-  ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');
+  ...sequelize.models, // para poder importar los modelos así: const { Character, User } = require('./db.js');
   conn: sequelize // para importart la conexión { conn } = require('./db.js');
 }
