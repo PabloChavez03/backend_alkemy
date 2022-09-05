@@ -9,3 +9,7 @@ conn
       console.log('Server conectado al puerto', PORT)
     })
   })
+
+  module.exports = {
+    conn,
+  }

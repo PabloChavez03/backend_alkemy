@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -L"
+    "dev": "NODE_ENV=development nodemon -L",
+    "test": "NODE_ENV=test mocha src/test"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,9 @@
     "sequelize": "^6.21.4"
   },
   "devDependencies": {
-    "nodemon": "^2.0.19"
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0",
+    "nodemon": "^2.0.19",
+    "supertest": "^6.2.4"
   }
 }

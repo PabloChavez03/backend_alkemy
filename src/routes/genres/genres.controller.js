@@ -17,14 +17,28 @@ const getGenres = async (req, res) => {
 
 const postGenre = async (req, res) => {
   const { name, image } = req.body
+
   try {
+    if (!image) {
+      const [genre, created] = await Genre.findOrCreate({
+        where: {
+          name
+        }
+      })
+
+      if (created === true) {
+        return res.status(201).json({ message: "El género fue añadido correctamente" })
+      }
+
+      return res.status(200).json({ message: "El género ya fue añadido previamente" })
+    }
+
     const [genre, created] = await Genre.findOrCreate({
       where: {
         name,
         image
       }
     })
-
 
     if (created === true) {
       return res.status(201).json({ message: "El género fue añadido correctamente" })
@@ -33,7 +47,7 @@ const postGenre = async (req, res) => {
     return res.status(200).json({ message: "El género ya fue añadido previamente" })
 
   } catch (error) {
-
+    return res.status(409).json({ message: error.message })
   }
 }
 

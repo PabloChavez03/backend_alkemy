@@ -6,10 +6,15 @@ const {
   DB_NAME,
   DB_USER,
   DB_PASSWORD,
-  DB_HOST
+  DB_HOST,
+  DB_NAME_TEST
 } = process.env
 
-const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`, {
+const DB_NAME_CURRENT = process.env.NODE_ENV === 'test'
+? DB_NAME_TEST
+: DB_NAME
+
+const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME_CURRENT}`, {
   logging: false
 })
 
