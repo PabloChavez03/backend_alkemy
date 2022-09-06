@@ -21,10 +21,15 @@ Deberá crear un archivo `.env` y escribir dentro los siguientes datos:
 
     `SENDGRID_API_KEY` = *adicionalmente deberá registrarse y proporcionar una api key para sengrid para los emails.*
 
+    `TEMPLATE_ID` = *es para proporcionar un template a los emails, SendGrid le ofrece esta posibilidad, me parece muy buena.*
+    
+
 
 ### 1.2 Adicional
 
-Adicionalmente deberá registrarse en Sengrid para conseguir su apikey (o utilizar la proporcionada).
+Adicionalmente deberá registrarse en Sengrid para conseguir su SENGRID_API_KEY. 
+
+_Yo actualmente quise cederles mi apikey y me suspendieron momentaneamente la cuenta por exponer la apikey, pero ya estará desbloqueada._
 
 ## 2. Testing
 
