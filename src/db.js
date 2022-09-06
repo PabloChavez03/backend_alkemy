@@ -35,7 +35,7 @@ fs.readdirSync(path.join(__dirname, '/models'))
 
 // Injectamos la conexion (sequelize) a todos los modelos
 modelDefiners.forEach((model) => model(sequelize))
-// Capitalizamos los nombres de los modelos ie: product => Product
+// Capitalizamos los nombres de los modelos: user => User
 const entries = Object.entries(sequelize.models)
 const capsEntries = entries.map((entry) => [
   entry[0][0].toUpperCase() + entry[0].slice(1),
